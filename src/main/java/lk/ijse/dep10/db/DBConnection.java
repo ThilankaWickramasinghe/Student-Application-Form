@@ -1,45 +1,26 @@
 package lk.ijse.dep10.db;
 
-import javafx.scene.control.Alert;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Properties;
+import java.sql.SQLException;
 
 public class DBConnection {
     private static DBConnection dbConnection;
     private final Connection connection;
 
-    private DBConnection(){
+    private DBConnection() {
         try {
-            File file = new File("application.properties");
-            Properties properties = new Properties();
-            FileReader fr = new FileReader(file);
-            properties.load(fr);
-            fr.close();
-
-            String host= properties.getProperty("mysql.host","localhost");
-            String port= properties.getProperty("mysql.port","3306");
-            String database = properties.getProperty("mysql.database","student_attendance");
-            String username = properties.getProperty("mysql.username","root");
-            String password = properties.getProperty("mysql.password","");
-
-            String url = "jdbc:mysql://" + host + ":" + port + "/"+ database + "?createDatabaseIfNotExist=true";
-            connection = DriverManager.getConnection(url,username,password);
-        } catch (Exception e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR,"Failed to obtain the database connection").showAndWait();
+            connection = DriverManager.getConnection("jdbc:mysql://dep10.lk:3306/dep10_jdbc", "root", "abc123");
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public static DBConnection getInstance(){
-        return (dbConnection==null)? dbConnection=new DBConnection() : dbConnection;
+
+    public static DBConnection getInstance() {
+        return (dbConnection == null) ? dbConnection = new DBConnection() : dbConnection;
     }
 
-    public Connection getConnection(){
+    public Connection getConnection() {
         return connection;
     }
 }
