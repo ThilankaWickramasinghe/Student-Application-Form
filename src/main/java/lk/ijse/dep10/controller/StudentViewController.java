@@ -167,7 +167,7 @@ public class StudentViewController {
 
 
     public void btnSaveStudentOnAction(ActionEvent event) {
-
+        if (!isDataValid()) return;
 
         try {
             Student student = new Student(Integer.parseInt(txtId.getText()), txtFirstName.getText(), txtLastName.getText(), txtAddress.getText(), tglGender.getSelectedToggle() == rdMale ? Gender.MALE : Gender.FEMALE, txtDOB.getValue());
@@ -201,6 +201,56 @@ public class StudentViewController {
             new Alert(Alert.AlertType.ERROR, "Failed to save the student, try again!").show();
         }
 
+    }
+
+    private boolean isDataValid() {
+        boolean isDataValid = true;
+
+        for (Node node : new Node[]{txtFirstName, txtLastName, txtAddress, rdMale, rdFemale, txtDOB}) {
+            node.getStyleClass().remove("invalid");
+        }
+
+        String firstName = txtFirstName.getText();
+        String lastName = txtLastName.getText();
+        String address = txtAddress.getText();
+        Toggle selectedToggle = tglGender.getSelectedToggle();
+        LocalDate dob = txtDOB.getValue();
+
+        if (dob == null || !(dob.isBefore(LocalDate.of(2010, 1, 1)) && dob.isAfter(LocalDate.of(1980, 1, 1)))) {
+            isDataValid = false;
+            txtDOB.requestFocus();
+            txtDOB.getStyleClass().add("invalid");
+        }
+
+        if (selectedToggle == null) {
+            isDataValid = false;
+            rdMale.requestFocus();
+            rdMale.getStyleClass().add("invalid");
+            rdFemale.getStyleClass().add("invalid");
+        }
+
+        if (address.strip().length() < 3) {
+            isDataValid = false;
+            txtAddress.requestFocus();
+            txtAddress.selectAll();
+            txtAddress.getStyleClass().add("invalid");
+        }
+
+        if (!lastName.matches("[A-Za-z ]+")) {
+            isDataValid = false;
+            txtLastName.requestFocus();
+            txtLastName.selectAll();
+            txtLastName.getStyleClass().add("invalid");
+        }
+
+        if (!firstName.matches("[A-Za-z ]+")) {
+            isDataValid = false;
+            txtFirstName.requestFocus();
+            txtFirstName.selectAll();
+            txtFirstName.getStyleClass().add("invalid");
+        }
+
+        return isDataValid;
     }
 
 
